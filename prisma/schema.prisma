@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model artisti {
+  id             Int    @id @default(autoincrement())
+  etunimi        String @db.Text
+  sukunimi       String @db.Text
+  kaupunki       String @db.Text
+  tyyli          String @db.Text
+  kerro          String @db.Text
+  tyopaikka      String @db.Text
+  s_posti        String @db.Text
+  puhnumero      String @db.Text
+  kayttajatunnus String @db.Text
+  salasana       String @db.Text
+}
+
+model asiakas {
+  id             Int    @id @default(autoincrement())
+  etunimi        String @db.Text
+  sukunimi       String @db.Text
+  s_posti        String @map("s-posti") @db.Text
+  kayttajatunnus String @db.Text
+  salasana       String @db.Text
+}
+
+model keskustelu {
+  id          Int       @id @default(autoincrement())
+  sisalto     String    @db.Text
+  kirjoittaja String    @db.Text
+  otsikko     String    @db.Text
+  aikaleima   DateTime  @default(now()) @db.Date
+  viestit     viestit[]
+}
+
+model viestit {
+  id           Int        @id @default(autoincrement())
+  viesti       String     @db.Text
+  nimi         String     @db.Text
+  keskusteluId Int
+  keskustelu   keskustelu @relation(fields: [keskusteluId], references: [id], onUpdate: Restrict, map: "viestit_ibfk_1")
+
+  @@index([keskusteluId], map: "keskusteluId")
+}
